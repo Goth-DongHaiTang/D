@@ -3,119 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>文件链接生成二维码</title>
+  <title>文件转二维码</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
     body {
-      background-color: #f5f5f5;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .container {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 500px;
-      padding: 20px;
       text-align: center;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #FFF4E3;
+      color: #5B4636;
     }
-    h1 {
-      font-size: 24px;
-      color: #4CAF50;
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 16px;
-      font-weight: bold;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-bottom: 20px;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #45a049;
+    input {
+      margin: 10px;
     }
     canvas {
       margin-top: 20px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .download {
-      display: inline-block;
-      margin-top: 20px;
-      text-decoration: none;
-      background-color: #2196F3;
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    .download:hover {
-      background-color: #0b7dda;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>文件链接生成二维码</h1>
-    <label for="linkInput">请输入文件的共享链接：</label>
-    <input type="text" id="linkInput" placeholder="粘贴文件链接，例如：https://example.com/file">
-    <button onclick="generateQRCode()">生成二维码</button>
-    <canvas id="qrcodeCanvas"></canvas>
-    <a id="downloadLink" class="download" style="display:none;">下载二维码</a>
-  </div>
+  <h1>文件转二维码</h1>
+  <input type="file" id="fileInput">
+  <button onclick="generateQRCode()">生成二维码</button>
+  <canvas id="qrcodeCanvas"></canvas>
+  <a id="downloadLink" style="display: none;">下载二维码</a>
 
   <script>
     function generateQRCode() {
-      const link = document.getElementById('linkInput').value.trim();
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
       const canvas = document.getElementById('qrcodeCanvas');
       const downloadLink = document.getElementById('downloadLink');
 
-      if (!link) {
-        alert('请输入有效的链接！');
+      if (!file) {
+        alert('请选择文件');
         return;
       }
 
-      // 生成二维码
-      QRCode.toCanvas(canvas, link, { width: 250 }, function (error) {
-        if (error) {
-          console.error(error);
-          alert('二维码生成失败，请检查链接是否正确！');
-        } else {
-          // 显示下载按钮
-          downloadLink.href = canvas.toDataURL('image/png');
-          downloadLink.download = 'qrcode.png';
-          downloadLink.style.display = 'inline-block';
-          downloadLink.textContent = '下载二维码';
-        }
-      });
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const base64Data = e.target.result;
+
+        QRCode.toCanvas(canvas, base64Data, { width: 300 }, function (error) {
+          if (error) {
+            console.error(error);
+            alert('二维码生成失败');
+          } else {
+            downloadLink.href = canvas.toDataURL();
+            downloadLink.download = 'qrcode.png';
+            downloadLink.style.display = 'inline-block';
+            downloadLink.textContent = '下载二维码';
+          }
+        });
+      };
+      reader.readAsDataURL(file);
     }
   </script>
 </body>
