@@ -1,78 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub 文件二维码生成器</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            text-align: center;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        input, button {
-            margin: 10px 0;
-            padding: 10px;
-            font-size: 16px;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #4caf50;
-            color: white;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #qrcode {
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件转二维码</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>GitHub 文件二维码生成器</h1>
-        <p>将 GitHub 文件链接生成二维码</p>
-        <input type="text" id="fileLink" placeholder="输入 GitHub 文件的公开链接">
-        <button id="generateQRCode">生成二维码</button>
-        <div id="qrcode"></div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    <script>
-        const fileLinkInput = document.getElementById('fileLink');
-        const generateQRCodeBtn = document.getElementById('generateQRCode');
-        const qrCodeContainer = document.getElementById('qrcode');
-
-        generateQRCodeBtn.addEventListener('click', () => {
-            const fileLink = fileLinkInput.value.trim();
-            if (!fileLink) {
-                alert('请输入 GitHub 文件的公开链接！');
-                return;
-            }
-            qrCodeContainer.innerHTML = ''; // 清空旧二维码
-            try {
-                new QRCode(qrCodeContainer, {
-                    text: fileLink,
-                    width: 256,
-                    height: 256,
-                });
-            } catch (error) {
-                console.error('二维码生成失败：', error);
-                alert('二维码生成失败，请重试！');
-            }
-        });
-    </script>
+  <h1>文件链接生成二维码</h1>
+  <label for="linkInput">输入文件链接：</label>
+  <input type="text" id="linkInput" placeholder="粘贴文件链接">
+  <button onclick="generateQRCode()">生成二维码</button>
+  <canvas id="qrcodeCanvas"></canvas>
+  <script>
+    function generateQRCode() {
+      const link = document.getElementById('linkInput').value;
+      if (!link) {
+        alert('请输入文件链接');
+        return;
+      }
+      QRCode.toCanvas(document.getElementById('qrcodeCanvas'), link, function (error) {
+        if (error) console.error(error);
+        else alert('二维码生成成功！');
+      });
+    }
+  </script>
 </body>
 </html>
